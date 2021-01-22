@@ -1,4 +1,6 @@
 import sys
+import re
+
 
 # TODO Your input variable will contain a string of invalid JSON.
 #  However, each invalid JSON string received can be fixed by making one or more single character changes.
@@ -9,19 +11,19 @@ import sys
 
 
 def fix_json(invalid_json):
-    word = ''
-    result = list()
-    for symbol in invalid_json:
-        if symbol != '{' and symbol != '}':
-            if symbol == ':' or symbol == ',':
-                result.append(word)
-                word = ''
-            else:
-                word += symbol
-    return result
+    if not invalid_json.startswith('{'):
+        invalid_json = '{' + invalid_json
+    if not invalid_json.endswith('}'):
+        invalid_json = invalid_json + '}'
+    if '":' in invalid_json:
+        invalid_json.replace('":', '":"')
+    if ':"' in invalid_json:
+        invalid_json.replace(':"', '":"')
+    if '""' in invalid_json:
+        invalid_json.replace('""', '","')
+    return invalid_json
 
 
 if __name__ == '__main__':
-    print('Mission started!')
     str_raw = sys.argv[1]
     print(fix_json(str_raw))
