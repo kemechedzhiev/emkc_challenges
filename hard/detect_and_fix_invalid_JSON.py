@@ -1,5 +1,4 @@
 import sys
-import re
 
 
 # TODO Your input variable will contain a string of invalid JSON.
@@ -11,17 +10,27 @@ import re
 
 
 def fix_json(invalid_json):
-    if not invalid_json.startswith('{'):
-        invalid_json = '{' + invalid_json
-    if not invalid_json.endswith('}'):
-        invalid_json = invalid_json + '}'
-    if '":' in invalid_json:
-        invalid_json.replace('":', '":"')
-    if ':"' in invalid_json:
-        invalid_json.replace(':"', '":"')
-    if '""' in invalid_json:
-        invalid_json.replace('""', '","')
-    return invalid_json
+    content_of_invalid_json = list()
+    word_from_json = ''
+    for symbol in invalid_json.lower():
+        if symbol.isalpha() or symbol.isnumeric():
+            word_from_json += symbol
+        else:
+            if word_from_json != '':
+                content_of_invalid_json.append(word_from_json)
+                word_from_json = ''
+    if word_from_json != '' and word_from_json not in content_of_invalid_json:
+        content_of_invalid_json.append(word_from_json)
+    if not len(content_of_invalid_json) % 2 == 0:
+        return f"There's an error here: {content_of_invalid_json}"
+    return make_json_from_list(content_of_invalid_json)
+
+
+def make_json_from_list(content_to_pack):
+    result = ''
+    for i in range(0, len(content_to_pack), 2):
+        result += '"' + content_to_pack[i] + '":"' + content_to_pack[i+1] + '"'
+    return '{' + result + '}'
 
 
 if __name__ == '__main__':
